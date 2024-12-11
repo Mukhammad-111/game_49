@@ -125,6 +125,25 @@ class Berserk(Hero):
         print(f'Berserk {self.name} reverted {self.__blocked_damage} damage to boss')
 
 
+
+
+
+
+class Witcher(Hero):
+    def __init__(self, name, health, damage):
+        super().__init__(name, health, damage, 'REVIVE')
+
+    def apply_super_power(self, boss, heroes):
+        while self.health > 0:
+            for hero in heroes:
+                if hero.health <= 0:
+                    hero.health += self.health
+                    self.health = 0
+                    break
+
+
+
+
 round_number = 0
 
 
@@ -170,8 +189,9 @@ def start_game():
     doc = Medic('Merlin', 250, 5, 15)
     assistant = Medic('Florin', 300, 5, 5)
     berserk = Berserk('Guts', 260, 10)
+    witcher = Witcher('Itachi', 270, 0)
 
-    heroes_list = [warrior_1, warrior_2, magic, doc, assistant, berserk]
+    heroes_list = [warrior_1, warrior_2, magic, doc, assistant, berserk, witcher]
 
     show_statistics(boss, heroes_list)
     while not is_game_over(boss, heroes_list):
