@@ -55,7 +55,7 @@ class Boss(GameEntity):
                     hero.blocked_damage = block
                     hero.health -= (self.damage - block)
                 else:
-                    hero.health -= self.damage
+                    hero.health -= (self.damage - (self.damage // 5))
 
     def __str__(self):
         return f'BOSS ' + super().__str__() + f' defence: {self.__defence}'
@@ -92,8 +92,10 @@ class Magic(Hero):
         super().__init__(name, health, damage, 'BOOST')
 
     def apply_super_power(self, boss, heroes):
-        # TODO Implementation of BOOST ability
-        pass
+        if 0 < round_number <= 4:
+            for hero in heroes:
+                hero.damage += randint(2, 5)
+                print(f'mag {self.name} увеличил урон героя {hero.name}')
 
 
 class Medic(Hero):
@@ -126,21 +128,46 @@ class Berserk(Hero):
 
 
 
-
-
-
 class Witcher(Hero):
     def __init__(self, name, health, damage):
         super().__init__(name, health, damage, 'REVIVE')
 
     def apply_super_power(self, boss, heroes):
-        while self.health > 0:
+        if self.health > 0:
             for hero in heroes:
                 if hero.health <= 0:
                     hero.health += self.health
                     self.health = 0
-                    break
 
+
+
+class Hacker(Hero):
+    def __init__(self, name, health, damage):
+        super().__init__(name, health, damage, 'PICK_UP_HEALTHY')
+
+    def apply_super_power(self, boss, heroes):
+        if self.health > 0 and round_number % 2 == 0:
+            pick_up_healthy = choice([5, 10])
+            boss.health -= pick_up_healthy
+            hero = choice(heroes)
+            hero.health += pick_up_healthy
+            print(f'Хакер увеличил героя: {hero.name} на {pick_up_healthy}')
+
+
+
+class Golem(Hero):
+    def __init__(self, name, health, damage):
+        super().__init__(name, health, damage, 'TAKES_DAMAGE')
+
+    def apply_super_power(self, boss, heroes):
+        takes_damage = 0
+        if self.health > 0:
+            for hero in heroes:
+                if hero.health > 0 and self != hero:
+                    t_damage = boss.damage // 5
+                    boss.damage -= t_damage
+                    takes_damage += t_damage
+            self.health -= takes_damage
 
 
 
@@ -190,8 +217,10 @@ def start_game():
     assistant = Medic('Florin', 300, 5, 5)
     berserk = Berserk('Guts', 260, 10)
     witcher = Witcher('Itachi', 270, 0)
+    hacker = Hacker('Li', 270, 5)
+    golem = Golem('Pekka', 300,  5)
 
-    heroes_list = [warrior_1, warrior_2, magic, doc, assistant, berserk, witcher]
+    heroes_list = [warrior_1, warrior_2, magic, doc, assistant, berserk, witcher, hacker, golem]
 
     show_statistics(boss, heroes_list)
     while not is_game_over(boss, heroes_list):
