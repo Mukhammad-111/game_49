@@ -94,8 +94,11 @@ class Magic(Hero):
     def apply_super_power(self, boss, heroes):
         if 0 < round_number <= 4:
             for hero in heroes:
-                hero.damage += randint(2, 5)
-                print(f'mag {self.name} увеличил урон героя {hero.name}')
+                if type(hero) == Witcher:
+                    hero.damage = 0
+                else:
+                    hero.damage += randint(2, 5)
+                    print(f'mag {self.name} увеличил урон героя {hero.name}')
 
 
 class Medic(Hero):
